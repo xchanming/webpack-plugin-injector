@@ -3,7 +3,7 @@ const fs = require('fs');
 const { addPath } = require('app-module-path');
 const merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const WebpackCopyAfterBuildPlugin = require('@shopware-ag/webpack-copy-after-build');
+const WebpackCopyAfterBuildPlugin = require('@cicada-ag/webpack-copy-after-build');
 
 const projectRoot = process.env.PROJECT_ROOT || '';
 
@@ -31,7 +31,7 @@ function toKebabCase(val) {
  * @type {string[]}
  */
 const sections = [
-    'storefront',
+    'frontend',
     'administration'
 ];
 
@@ -46,7 +46,7 @@ function resolve(directory) {
 }
 
 /**
- * Contains a collection of functions which sanitizes the plugin list for the storefront and administration
+ * Contains a collection of functions which sanitizes the plugin list for the frontend and administration
  */
 class WebpackPluginInjector {
     /**
@@ -55,7 +55,7 @@ class WebpackPluginInjector {
      * @constructor
      * @param {String} filePath Path to definition file
      * @param {Object} webpackConfig
-     * @param {String} section Either 'storefront' or 'administration'
+     * @param {String} section Either 'frontend' or 'administration'
      * @param {boolean} [silent=false]
      * @returns {void}
      */
@@ -140,7 +140,7 @@ class WebpackPluginInjector {
     }
 
     /**
-     * Parses the plugin definition file and split them into the two sections storefront and administration.
+     * Parses the plugin definition file and split them into the two sections frontend and administration.
      *
      * @param {Object} pluginDefinitions
      * @return {Object<Array>}
@@ -148,7 +148,7 @@ class WebpackPluginInjector {
     parsePluginDefinitions(pluginDefinitions) {
         const plugins = {
             administration: [],
-            storefront: []
+            frontend: []
         };
 
         Object.keys(pluginDefinitions).forEach((pluginName) => {
@@ -187,8 +187,8 @@ class WebpackPluginInjector {
         if (pluginDefinition.administration && section === 'administration') {
             assetPaths.push(join(basePath, pluginDefinition.administration.path, '../static'));
         }
-        if (pluginDefinition.storefront && section === 'storefront') {
-            assetPaths.push(join(basePath, pluginDefinition.storefront.path, '../static'));
+        if (pluginDefinition.frontend && section === 'frontend') {
+            assetPaths.push(join(basePath, pluginDefinition.frontend.path, '../static'));
         }
 
         return {
@@ -247,7 +247,7 @@ class WebpackPluginInjector {
                 this.webpackConfig.entry = {};
             }
 
-            if (process.env.MODE !== 'hot' || this.section !== 'storefront') {
+            if (process.env.MODE !== 'hot' || this.section !== 'frontend') {
                 // Add plugin as a new entry in the webpack config, respect NODE_ENV and insert the 'dev-client' if necessary
                 this.webpackConfig.entry[technicalName] = (this.env === 'development' && this.section === 'administration')
                     ? ['./build/dev-client'].concat(plugin.entryFile)
@@ -318,8 +318,8 @@ class WebpackPluginInjector {
                 pluginPath = `${basePath}Resources/public/administration`;
                 publicStaticPath = `${basePath}Resources/public/static/`;
             } else {
-                pluginPath = `${basePath}Resources/app/storefront/dist/storefront`;
-                publicStaticPath = `${basePath}Resources/app/storefront/dist/static/`;
+                pluginPath = `${basePath}Resources/app/frontend/dist/frontend`;
+                publicStaticPath = `${basePath}Resources/app/frontend/dist/static/`;
             }
 
             // Copy plugin chunk after build
