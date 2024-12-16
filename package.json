@@ -1,6 +1,6 @@
 {
   "name": "@cicada-ag/webpack-plugin-injector",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Injects Cicada Plugins into a Webpack config",
   "main": "index.js",
   "license": "MIT",
